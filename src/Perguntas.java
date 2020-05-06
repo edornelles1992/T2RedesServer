@@ -10,7 +10,7 @@ public class Perguntas {
 	}
 
 	private static void montarPerguntasNormal() {
-		normal[0] = new Pergunta("qual é a resposta pergunta 1? ","bola","casa","chapeu","bola");
+		normal[0] = new Pergunta("qual é a resposta pergunta 1?","bola","casa","chapeu","bola");
 		normal[1] = new Pergunta("qual é resposta pergunta 2?","bola","casa","chapeu","casa");
 		normal[2] = new Pergunta("qual é resposta pergunta 3?","bola","casa","chapeu","chapeu");
 	}

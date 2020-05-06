@@ -22,7 +22,7 @@ public abstract class Data {
 
 	protected static void enviarDados(String dados) {
 		try {
-			DatagramPacket sendPacket = new DatagramPacket(dados.getBytes(), dados.length(), enderecoCliente,
+			DatagramPacket sendPacket = new DatagramPacket(dados.getBytes(), dados.length() + 1, enderecoCliente,
 					portaCliente);
 			serverSocket.send(sendPacket);
 		} catch (IOException e) {
