@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * Classe contendo os métodos de manipulação do socket dos
+ * Classe contendo os métodos de manipulação do socket e dos
  * datagrams no lado do SERVIDOR
  */
 public abstract class Data {
@@ -51,8 +51,7 @@ public abstract class Data {
 	/**
 	 * Aguarda o cliente retornar os dados solicitados e retorna
 	 * os dados em caso de sucesso. Caso o tempo de espera dos dados demore
-	 * mais que o timeout configurado ele avisa em tela para o usuário que está
-	 * com problema para receber os dados e fica em loop até conseguir receber os dados.
+	 * mais que o timeout configurado ele fica em loop até conseguir receber os dados.
 	 * @return dado recebido
 	 */
 	protected static String receberDados() {
@@ -63,8 +62,6 @@ public abstract class Data {
 			getClientInfos(receiveDatagram);
 			return new String(receiveDatagram.getData()).trim();
 		} catch (IOException e) {
-			System.out.println("Houve um problema na comunicação com o cliente...");
-			System.out.println("Tentando restabelecer comunicação...");
 			return receberDados();
 		}
 	}
