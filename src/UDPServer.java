@@ -1,42 +1,34 @@
-public class UDPServer {
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class UDPServer extends Data {
 	
-	public static void main(String args[]) {
-			iniciarSlots();
+	public static void main(String args[]) throws Exception {
+		DatagramSocket serverSocket = new DatagramSocket(50000);
+
+		byte[] receiveData = new byte[1024];
+		while (true) {
+			// declara o pacote a ser recebido
+			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+			// recebe o pacote do cliente
+			serverSocket.receive(receivePacket);
+
+			byte[] document = receivePacket.getData();
+
+			try {
+				Path path = Paths.get("arquivoRecebidoUDP" + document.length + ".txt");
+				Files.write(path, document);
+				System.out.println("Arquivo Recebido e salvo com sucesso!");
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("Erro ao salvar arquivo!");
+			}
+
+		}
 	}
-	
-	/**
-	 * Ao subir a aplicação inicia duas threads que aguardam pelo
-	 * client para iniciar a partida. Permite 2 clientes jogarem
-	 * simultaneamente. OBS: cada um na sua partida.
-	 */
-	public static void iniciarSlots(){
-		
-		Thread slot1 = new Thread(new Runnable() {
-		    @Override
-		    public void run() {
-		        while(true)
-		        {
-		        	Partida partida = new Partida();
-					partida.iniciarPartida(50000);
-		        }
-		    }
-		});
-		
-		Thread slot2 = new Thread(new Runnable() {
-
-		    @Override
-		    public void run() {
-		        while(true)
-		        {
-		        	Partida partida = new Partida();
-					partida.iniciarPartida(40000);
-		        }
-		    }
-		});
-		
-		slot1.start();
-		slot2.start();
-	}
-
-
 }
