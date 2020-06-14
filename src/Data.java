@@ -68,12 +68,16 @@ public class Data implements Parametros {
 		}
 	}
 
+	/**
+	 * Recebe um pacote datagrama e converte ele para o objeto Pacote
+	 */
 	protected static Pacote receberDados() {
 		try {
-			byte[] receiveData = new byte[packetSize];
+			byte[] receiveData = new byte[1024];
 			DatagramPacket receiveDatagram = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receiveDatagram);
 			byte[] recBytes = receiveDatagram.getData();
+			int x = recBytes.length;
 			ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(recBytes));
 			Pacote pacote = (Pacote) iStream.readObject();
 			iStream.close();
