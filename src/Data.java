@@ -13,14 +13,13 @@ import java.net.SocketException;
  * Classe contendo os métodos de manipulação do socket dos datagrams no lado do
  * SERVIDOR
  */
-public class Data {
+public class Data implements Parametros {
 
 	private static DatagramSocket serverSocket;
 	private static InetAddress enderecoCliente;
 	private static Integer portaCliente = -1;
 	protected final static Integer porta1 = 50000;
 	private static Integer timeout = 1500;
-	public static Integer dataSize = 512;
 
 	/**
 	 * Inicia o socket ao subir o servidor setando um valor fixo de timeout
@@ -71,7 +70,7 @@ public class Data {
 
 	protected static Pacote receberDados() {
 		try {
-			byte[] receiveData = new byte[dataSize];
+			byte[] receiveData = new byte[packetSize];
 			DatagramPacket receiveDatagram = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receiveDatagram);
 			byte[] recBytes = receiveDatagram.getData();
