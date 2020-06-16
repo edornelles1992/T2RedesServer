@@ -10,7 +10,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * Classe contendo os métodos de manipulação do socket dos datagrams no lado do
+ * Classe contendo os mï¿½todos de manipulaï¿½ï¿½o do socket dos datagrams no lado do
  * SERVIDOR
  */
 public class Data implements Parametros {
@@ -46,9 +46,9 @@ public class Data implements Parametros {
 	}
 
 	/**
-	 * Recebe os dados a ser enviados e envia pelo socket já pré configurado. Caso
-	 * ocorra algum erro no envio a exceção é capturada e fica tenta enviar
-	 * novamente até obter sucesso.
+	 * Recebe os dados a ser enviados e envia pelo socket jï¿½ prï¿½ configurado. Caso
+	 * ocorra algum erro no envio a exceï¿½ï¿½o ï¿½ capturada e fica tenta enviar
+	 * novamente atï¿½ obter sucesso.
 	 * 
 	 * @param dados
 	 */
@@ -59,11 +59,11 @@ public class Data implements Parametros {
 			oo.writeObject(pacote);
 			oo.close();
 			byte[] serialized = bStream.toByteArray();
-			DatagramPacket sendPacket = new DatagramPacket(serialized, serialized.length);
+			DatagramPacket sendPacket = new DatagramPacket(serialized, serialized.length, enderecoCliente, portaCliente);
 			serverSocket.send(sendPacket);
 		} catch (IOException e) {
-			System.out.println("Houve um problema na comunicação com o servidor...");
-			System.out.println("Tentando restabelecer a conexão...");
+			System.out.println("Houve um problema na comunicaï¿½ï¿½o com o servidor...");
+			System.out.println("Tentando restabelecer a conexï¿½o...");
 			enviarDados(pacote);
 		}
 	}
@@ -81,6 +81,7 @@ public class Data implements Parametros {
 			ObjectInputStream iStream = new ObjectInputStream(new ByteArrayInputStream(recBytes));
 			Pacote pacote = (Pacote) iStream.readObject();
 			iStream.close();
+			getClientInfos(receiveDatagram);
 			return pacote;
 		} catch (IOException e) {
 			return receberDados();
@@ -92,14 +93,15 @@ public class Data implements Parametros {
 
 	/**
 	 * Captura IP e Porta do cliente que enviou o pacote para utilizar na resposta.
-	 * Caso já tenha um cliente conectado nesse socket, valida se é ele que esta
+	 * Caso jï¿½ tenha um cliente conectado nesse socket, valida se ï¿½ ele que esta
 	 * enviando os dados ou algum outro cliente. Caso seja outro retorna o erro de
 	 * slot ocupado para o cliente e poem o socket novamente para aguardar os dados
 	 * do cliente correto.
 	 * 
 	 * @param receiveDatagram
 	 */
-	private void getClientInfos(DatagramPacket receiveDatagram) throws IOException {
+	private static void getClientInfos(DatagramPacket receiveDatagram) throws IOException {
+
 		if (enderecoCliente == null) {
 			enderecoCliente = receiveDatagram.getAddress();
 			portaCliente = receiveDatagram.getPort();

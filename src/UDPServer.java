@@ -46,12 +46,21 @@ public class UDPServer extends Data {
 			pacote = Data.receberDados();
 			if (pacote.ultimo == ultimo_pacote) {
 				arqBytesList.add(pacote.dados);
+				enviarAck(pacote);
 				break;
 			} else {
 				arqBytesList.add(pacote.dados);
+				enviarAck(pacote);
 			}
 		}
 		return arqBytesList;
+	}
+
+	private static void enviarAck(Pacote pacote) {
+		System.out.println("SEQ: " + pacote.seq);
+		Pacote pacoteResposta = new Pacote();
+		pacoteResposta.ack = pacote.seq;
+		Data.enviarDados(pacoteResposta);
 	}
 	
 	private static byte[] ListaParaBytes(ArrayList<byte[]> arqBytesArray) {
