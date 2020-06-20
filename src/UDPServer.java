@@ -4,13 +4,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class UDPServer extends Data {
+public class UDPServer extends DataServer {
 	
 	public static void main(String args[]) throws Exception {
 		while (true) {
-			Data.iniciarSocket();
+			DataServer.iniciarSocket();
 			gerenciarDadosRecebidos();
-			Data.fecharSocket();		
+			DataServer.fecharSocket();		
 		}
 	}
 
@@ -43,7 +43,7 @@ public class UDPServer extends Data {
 		ArrayList<byte[]> arqBytesList = new ArrayList<>();
 		Pacote pacote;
 		while (true) {
-			pacote = Data.receberDados();
+			pacote = DataServer.receberDados();
 			if (pacote.ultimo == ultimo_pacote) {
 				arqBytesList.add(pacote.dados);
 				enviarAck(pacote);
@@ -59,8 +59,8 @@ public class UDPServer extends Data {
 	private static void enviarAck(Pacote pacote) {
 		System.out.println("SEQ: " + pacote.seq);
 		Pacote pacoteResposta = new Pacote();
-		pacoteResposta.ack = pacote.seq;
-		Data.enviarDados(pacoteResposta);
+		pacoteResposta.ack = pacote.seq + 1;
+		DataServer.enviarDados(pacoteResposta);
 	}
 	
 	private static byte[] ListaParaBytes(ArrayList<byte[]> arqBytesArray) {
