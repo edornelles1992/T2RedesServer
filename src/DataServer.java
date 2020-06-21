@@ -131,11 +131,6 @@ public class DataServer implements Parametros {
 	
 	protected static long calcularCRC32DoPacote(Pacote pacote) {
 		try {
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		ObjectOutput oo = new ObjectOutputStream(bStream);
-		oo.writeObject(pacote);
-		oo.close();
-		byte[] serialized = bStream.toByteArray();
 		Checksum checksum = new CRC32();
 		// update the current checksum with the specified array of bytes
 		checksum.update(pacote.dados, 0, pacote.dados.length);		 
