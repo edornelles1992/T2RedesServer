@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 /**
- * Classe contendo os m�todos de manipula��o do socket dos datagrams no lado do
+ * Classe contendo os métodos de manipulação dos sockets e dos datagrams no lado do
  * SERVIDOR
  */
 public class DataServer implements Parametros {
@@ -48,11 +51,9 @@ public class DataServer implements Parametros {
 	}
 	
 	/**
-	 * Recebe os dados a ser enviados e envia pelo socket j� pr� configurado. Caso
-	 * ocorra algum erro no envio a exce��o � capturada e fica tenta enviar
-	 * novamente at� obter sucesso.
-	 * 
-	 * @param dados
+	 * Recebe os dados a ser enviados e envia pelo socket já pré configurado. Caso
+	 * ocorra algum erro no envio a exceçãoé capturada e fica tentando enviar
+	 * novamente até obter sucesso.
 	 */
 	protected static void enviarDados(Pacote pacote) {
 		try {
@@ -67,7 +68,10 @@ public class DataServer implements Parametros {
 	}
 
 	/**
-	 * Recebe um pacote datagrama e converte ele para o objeto Pacote
+	 * Recebe um pacote datagrama e converte ele para o objeto Pacote. Também
+	 * chama a validação do CRC para validar os dados recebidos no pacote. Em
+	 * caso de erro por timeout ou por CRC inválido ele fica em looping esperando
+	 * chegar corretamente o pacote.
 	 */
 	protected static Pacote receberDados() {
 		try {
@@ -129,12 +133,14 @@ public class DataServer implements Parametros {
 		return crc_recebido == calcularCRC32DoPacote(pacote);
 	}
 	
+	/**
+	 * Método que realiza o calculo do CRC dos dados do pacote e
+	 * retorna o valor.
+	 */
 	protected static long calcularCRC32DoPacote(Pacote pacote) {
 		try {
 		Checksum checksum = new CRC32();
-		// update the current checksum with the specified array of bytes
-		checksum.update(pacote.dados, 0, pacote.dados.length);		 
-		// get the current checksum value
+		checksum.update(pacote.dados, 0, pacote.dados.length);
 		long checksumValue = checksum.getValue();
 		return checksumValue;
 		} catch (Exception e) {
@@ -145,12 +151,10 @@ public class DataServer implements Parametros {
 
 	/**
 	 * Captura IP e Porta do cliente que enviou o pacote para utilizar na resposta.
-	 * Caso j� tenha um cliente conectado nesse socket, valida se � ele que esta
+	 * Caso já tenha um cliente conectado nesse socket, valida se é ele que esta
 	 * enviando os dados ou algum outro cliente. Caso seja outro retorna o erro de
 	 * slot ocupado para o cliente e poem o socket novamente para aguardar os dados
 	 * do cliente correto.
-	 * 
-	 * @param receiveDatagram
 	 */
 	private static void getClientInfos(DatagramPacket receiveDatagram) throws IOException {
 
@@ -166,6 +170,22 @@ public class DataServer implements Parametros {
 				serverSocket.send(sendPacket);
 				throw new IOException("Outro cliente tentou conectar nesse slot");
 			}
+		}
+	}
+	
+	/**
+	 * Realiza o cálculo do md5sum baseando num string hash recebido
+	 */
+	public static String md5sum(String hash) {
+		String s = hash;
+		MessageDigest m;
+		try {
+			m = MessageDigest.getInstance("MD5");
+			m.update(s.getBytes(), 0, s.length());
+			return new BigInteger(1, m.digest()).toString(16);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }
